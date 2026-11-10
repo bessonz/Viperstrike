@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stream alerts plan</title>
+<style>
+@font-face { font-family: 'Instrument Sans'; src: url('../node_modules/@fontsource-variable/instrument-sans/files/instrument-sans-latin-wght-normal.woff2') format('woff2'); font-weight: 400 700; }
+:root {
+  --panel: #e9e8eb; --surface: #ffffff; --surface-2: #eeedf0; --ink: #1c1d22; --ink-2: #313b44; --muted: #606467; --line: #d9d8dc;
+  --accent-strong: #1c1d22; --on-accent: #ffffff; --bg: #d9d8dc; --live: #e5484d; --twitch: #9146ff; --yt: #ff2b2b; --sl: #31c3a2;
+  --deep: radial-gradient(120% 160% at 100% 100%, #313b44 0%, rgb(49 59 68 / 0) 62%), linear-gradient(150deg, #15161a, #1c1d22);
+}
+:root[data-theme='dark'] { --panel: #23252b; --surface: #2a2f36; --surface-2: #313b44; --ink: #f1f0f2; --ink-2: #c9c7cc; --muted: #aaa8ad; --line: #39424c; --accent-strong: #d4d2d7; --on-accent: #1c1d22; --bg: #1c1d22; }
+* { box-sizing: border-box; margin: 0; }
+body { font-family: 'Instrument Sans', 'Segoe UI', sans-serif; background: var(--bg); color: var(--ink); padding: 28px 16px 60px; -webkit-font-smoothing: antialiased; }
+button { font: inherit; color: inherit; background: none; border: 0; }
+.wrap { max-width: 1120px; margin: 0 auto; }
+header { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+h1 { font-size: 30px; letter-spacing: -0.03em; font-weight: 600; }
+header p { color: var(--muted); margin-top: 6px; max-width: 72ch; line-height: 1.45; }
+.seg { display: inline-flex; padding: 3px; border-radius: 20px; background: var(--surface); }
+.seg button { height: 32px; padding: 0 14px; border-radius: 16px; font-size: 13.5px; font-weight: 520; color: var(--muted); cursor: pointer; }
+.seg button.on { background: var(--accent-strong); color: var(--on-accent); }
+h2.group { font-size: 20px; font-weight: 600; letter-spacing: -0.02em; margin: 28px 0 12px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+h2.group small { font-size: 13.5px; color: var(--muted); font-weight: 450; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 12px; }
+.opt { background: var(--panel); border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.opt-head { display: flex; gap: 12px; align-items: flex-start; }
+.num { flex: none; width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; font-weight: 650; background: var(--accent-strong); color: var(--on-accent); }
+.opt h3 { font-size: 16px; font-weight: 600; letter-spacing: -0.012em; }
+.opt p, .base p { font-size: 13.5px; color: var(--muted); line-height: 1.45; margin-top: 3px; }
+.tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: auto; }
+.tag { font-size: 11.5px; font-weight: 560; padding: 2px 8px; border-radius: 8px; background: var(--surface-2); color: var(--ink-2); }
+.tag.warn { background: color-mix(in srgb, var(--twitch) 22%, var(--surface-2)); }
+.mock { border-radius: 14px; background: var(--bg); padding: 12px; min-height: 110px; display: flex; flex-direction: column; justify-content: center; gap: 8px; font-size: 12.5px; position: relative; overflow: hidden; }
+.box { background: var(--surface); border-radius: 10px; padding: 8px 10px; }
+.row { display: flex; gap: 8px; align-items: center; }
+.muted { color: var(--muted); } .b { font-weight: 600; }
+.chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 8px; background: var(--surface-2); font-size: 11.5px; font-weight: 560; }
+.btnm { display: inline-flex; align-items: center; justify-content: center; height: 26px; padding: 0 10px; border-radius: 13px; font-size: 12px; font-weight: 560; background: var(--accent-strong); color: var(--on-accent); }
+.btnm.o { background: none; box-shadow: inset 0 0 0 1px var(--line); color: var(--ink); }
+.alert { align-self: center; text-align: center; padding: 10px 16px; border-radius: 14px; background: var(--deep); color: #fff; box-shadow: 0 10px 24px rgb(0 0 0 / 0.35); }
+.alert small { display: block; color: rgb(255 255 255 / 0.75); margin-top: 2px; }
+.gif { width: 46px; height: 46px; margin: 0 auto 6px; border-radius: 12px; background: conic-gradient(from 30deg, #9146ff, #31c3a2, #ff2b2b, #9146ff); animation: spin 4s linear infinite; }
+@keyframes spin { to { transform: rotate(1turn); } }
+.dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.tw { background: var(--twitch); } .yt { background: var(--yt); } .sl { background: var(--sl); }
+.bar { height: 6px; border-radius: 3px; background: var(--surface-2); position: relative; } .bar i { position: absolute; inset: 0 40% 0 0; border-radius: 3px; background: var(--accent-strong); }
+
+/* The always-included part */
+.base { background: var(--panel); border-radius: 22px; padding: 18px; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 18px; }
+@media (max-width: 820px) { .base { grid-template-columns: 1fr; } }
+.base h3 { font-size: 17px; font-weight: 600; }
+.base ul { margin-top: 10px; padding-left: 18px; display: grid; gap: 7px; font-size: 13.5px; line-height: 1.45; }
+.base ul b { font-weight: 600; }
+.win { border-radius: 14px; background: var(--bg); overflow: hidden; display: grid; grid-template-columns: 132px 1fr; min-height: 300px; font-size: 12.5px; }
+.win nav { background: var(--surface); padding: 10px 8px; display: flex; flex-direction: column; gap: 3px; }
+.win nav span { display: flex; align-items: center; gap: 7px; padding: 6px 8px; border-radius: 8px; color: var(--muted); }
+.win nav span.on { background: var(--surface-2); color: var(--ink); font-weight: 560; }
+.win nav h4 { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 8px 8px 2px; font-weight: 600; }
+.win main { padding: 12px; display: flex; flex-direction: column; gap: 9px; min-width: 0; }
+.field { display: grid; grid-template-columns: 82px 1fr; gap: 8px; align-items: center; }
+.field > span { color: var(--muted); }
+.inp { background: var(--surface); border-radius: 8px; padding: 5px 8px; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.stage { border-radius: 10px; background: #15161a; min-height: 96px; display: grid; place-items: center; }
+footer { margin-top: 26px; color: var(--muted); font-size: 13px; line-height: 1.55; max-width: 84ch; }
+footer b { color: var(--ink); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Stream alerts</h1>
+      <p>The first part is what you asked for, and it's always included. Below it are numbered extras. Tell me the numbers you want, plus any changes to the base, and I'll build exactly that. Nothing here is in the app yet.</p>
+    </div>
+    <div class="seg" role="radiogroup" aria-label="Colour mode"><button data-t="light">Light</button><button data-t="dark" class="on">Dark</button></div>
+  </header>
+
+  <h2 class="group">Always included <small>Layout, Advanced, Alerts: opens its own window</small></h2>
+  <section class="base">
+    <div>
+      <h3>An Alerts window with one page per alert</h3>
+      <p>Adding Alerts from Advanced puts one alert box on your canvas, which you move and size like any widget. A button on it opens the Alerts window.</p>
+      <ul>
+        <li><b>Twitch:</b> follows, subs and resubs, gifted subs, bits and raids.</li>
+        <li><b>YouTube:</b> Super Chats, Super Stickers, new members and member milestones.</li>
+        <li><b>Streamlabs:</b> donations (tips). You connect with your Streamlabs Socket API token, copied from the Streamlabs dashboard.</li>
+        <li><b>Per alert:</b> text with {name}, {amount}, {months} and {message}, plus font, size, colour and outline. Add a picture, GIF or video. Choose the entry and exit animation, how long it stays, a sound with its volume, and where the picture sits (above, beside or behind the text).</li>
+        <li><b>Your own files:</b> pick pictures, GIFs, videos and sounds from your PC. They're kept in Viperstrike's folder, so the overlay can play them.</li>
+        <li><b>Turn each alert on or off</b>, with a Test button on every page.</li>
+        <li><b>Alerts take turns</b>: a burst of follows plays one after another, never on top of each other.</li>
+      </ul>
+    </div>
+    <div class="win" aria-label="Sketch of the Alerts window">
+      <nav>
+        <h4>Twitch</h4>
+        <span><i class="dot tw"></i>Follow</span>
+        <span class="on"><i class="dot tw"></i>Bits</span>
+        <span><i class="dot tw"></i>Sub</span>
+        <span><i class="dot tw"></i>Gift sub</span>
+        <span><i class="dot tw"></i>Raid</span>
+        <h4>YouTube</h4>
+        <span><i class="dot yt"></i>Super Chat</span>
+        <span><i class="dot yt"></i>Member</span>
+        <h4>Streamlabs</h4>
+        <span><i class="dot sl"></i>Donation</span>
+      </nav>
+      <main>
+        <div class="stage"><div class="alert"><div class="gif"></div><span class="b">Mara cheered 500 bits!</span><small>"gg that clutch"</small></div></div>
+        <div class="field"><span>Text</span><div class="inp">{name} cheered {amount} bits!</div></div>
+        <div class="field"><span>Picture</span><div class="inp">hype.gif</div></div>
+        <div class="field"><span>Sound</span><div class="inp">cash.mp3 · 70%</div></div>
+        <div class="field"><span>Animation</span><div class="inp">Pop in · Fade out · 6 s</div></div>
+        <div class="row" style="justify-content:flex-end"><span class="btnm o">Test</span><span class="btnm">On</span></div>
+      </main>
+    </div>
+  </section>
+
+  <h2 class="group">Extras <small>pick any</small></h2>
+  <div class="grid">
+    <article class="opt">
+      <div class="opt-head"><span class="num">1</span><div><h3>Bigger alerts for bigger amounts</h3><p>Each alert can have tiers, like 1000+ bits or $50+ donations, each with its own text, GIF, sound and length.</p></div></div>
+      <div class="mock"><div class="box row"><span class="chip">1+</span>Normal alert</div><div class="box row"><span class="chip">1000+</span><span class="b">Huge alert, confetti, airhorn</span></div></div>
+      <div class="tags"><span class="tag">Bits</span><span class="tag">Donations</span><span class="tag">Subs by months</span></div>
+    </article>
+    <article class="opt">
+      <div class="opt-head"><span class="num">2</span><div><h3>Read messages aloud</h3><p>Text-to-speech reads donation, bits and Super Chat messages after the alert. You set a minimum amount, a voice and a volume, and blocked words are skipped.</p></div></div>
+      <div class="mock"><div class="alert">Kai donated $10<small>🔊 "say hi to my mum"</small></div></div>
+      <div class="tags"><span class="tag">Uses the voices Viperstrike already has</span></div>
+    </article>
+    <article class="opt">
+      <div class="opt-head"><span class="num">3</span><div><h3>Alert queue controls</h3><p>In the Alerts window and Stream Controls: pause alerts, skip the current one, replay the last one, and see what's waiting.</p></div></div>
+      <div class="mock"><div class="box row"><span class="b">Playing:</span> Mara · 500 bits</div><div class="row"><span class="btnm o">Pause</span><span class="btnm o">Skip</span><span class="btnm o">Replay last</span><span class="muted">3 waiting</span></div></div>
+      <div class="tags"><span class="tag">Handy when you're busy in-game</span></div>
+    </article>
+    <article class="opt">
+      <div class="opt-head"><span class="num">4</span><div><h3>Instant follows (EventSub)</h3><p>Follows show within a second. Right now Viperstrike checks for them about once a minute. Subs, gift bombs and bits come through EventSub too, with exact details.</p></div></div>
+      <div class="mock"><div class="box row"><i class="dot tw"></i>Follow → alert in under 1 s</div><div class="box row muted">Today: up to a minute late</div></div>
+      <div class="tags"><span class="tag warn">You reconnect Twitch once to allow it</span></div>
+    </article>
+    <article class="opt">
+      <div class="opt-head"><span class="num">5</span><div><h3>Gift bombs as one alert</h3><p>"Zed gifted 20 subs" plays once, instead of 20 separate alerts.</p></div></div>
+      <div class="mock"><div class="alert">Zed gifted 20 subs!<small>to the community</small></div></div>
+      <div class="tags"><span class="tag">Twitch</span><span class="tag">Works best with 4</span></div>
+    </article>
+    <article class="opt">
+      <div class="opt-head"><span class="num">6</span><div><h3>Effects</h3><p>Confetti, sparkles, screen shake or a glow burst behind the alert, picked per alert or per tier.</p></div></div>
+      <div class="mock"><div class="alert" style="box-shadow:0 0 30px 6px rgb(145 70 255 / .6)">✨ New member! ✨<small>Welcome, Rio</small></div></div>
+      <div class="tags"><span class="tag">No video files needed</span></div>
+    </article>
+    <article class="opt">
+      <div class="opt-head"><span class="num">7</span><div><h3>Ready-made styles</h3><p>Pick a style to start from, like Clean, Neon, Retro or Minimal, then change anything. Or apply one style to every alert at once.</p></div></div>
+      <div class="mock"><div class="row"><span class="chip">Clean</span><span class="chip">Neon</span><span class="chip">Retro</span><span class="chip">Minimal</span></div><div class="box">Apply to all alerts</div></div>
+      <div class="tags"><span class="tag">Quick start</span></div>
+    </article>
+    <article class="opt">
+      <div class="opt-head"><span class="num">8</span><div><h3>Custom HTML and CSS per alert</h3><p>For full control: write the alert's look yourself, with the same {name} and {amount} fields filled in.</p></div></div>
+      <div class="mock"><div class="box" style="font-family:monospace">&lt;div class="wow"&gt;{name}&lt;/div&gt;</div></div>
+      <div class="tags"><span class="tag">Advanced</span><span class="tag">Runs sandboxed, like Custom code</span></div>
+    </article>
+    <article class="opt">
+      <div class="opt-head"><span class="num">9</span><div><h3>Several alert boxes</h3><p>Send different alerts to different spots, for example donations centre-screen and follows in a corner.</p></div></div>
+      <div class="mock"><div class="row" style="justify-content:space-between"><span class="box">Follows → corner box</span><span class="box">Donations → centre box</span></div></div>
+      <div class="tags"><span class="tag">Layout</span></div>
+    </article>
+    <article class="opt">
+      <div class="opt-head"><span class="num">10</span><div><h3>Alert history and goals</h3><p>A list of recent alerts with Replay buttons. Progress goals can count bits, subs or donations automatically.</p></div></div>
+      <div class="mock"><div class="box row"><span class="b">Sub goal</span><span class="muted">12 / 20</span></div><div class="bar"><i></i></div></div>
+      <div class="tags"><span class="tag">Uses the existing goal widget</span></div>
+    </article>
+    <article class="opt">
+      <div class="opt-head"><span class="num">11</span><div><h3>YouTube new subscribers</h3><p>An alert when someone subscribes on YouTube. YouTube only lists public subscribers, so private ones never show, and they're checked every minute or two.</p></div></div>
+      <div class="mock"><div class="box row"><i class="dot yt"></i>Public subscribers only</div></div>
+      <div class="tags"><span class="tag warn">YouTube limit: not instant, not everyone</span></div>
+    </article>
+    <article class="opt">
+      <div class="opt-head"><span class="num">12</span><div><h3>Streamlabs for everything</h3><p>Let Streamlabs also send Twitch and YouTube events, for people who'd rather not connect those accounts in Viperstrike. Duplicates are skipped.</p></div></div>
+      <div class="mock"><div class="box row"><i class="dot sl"></i>Streamlabs → follows, subs, bits, members</div></div>
+      <div class="tags"><span class="tag">Backup source</span></div>
+    </article>
+  </div>
+
+  <footer>
+    <p><b>Replaces:</b> the current "Event alert box" widget moves into this. Layouts that already use it keep working.</p>
+    <p><b>Mods and editors</b> you invited can edit alerts too, but only you can pick files from your PC or connect Streamlabs.</p>
+  </footer>
+</div>
+<script>
+for (const b of document.querySelectorAll('.seg button')) b.addEventListener('click', () => {
+  document.documentElement.dataset.theme = b.dataset.t;
+  for (const o of document.querySelectorAll('.seg button')) o.classList.toggle('on', o === b);
+});
+</script>
+</body>
+</html>

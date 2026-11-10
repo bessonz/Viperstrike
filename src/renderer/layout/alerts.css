@@ -1,0 +1,86 @@
+/* Stream alerts: shared by the overlay, the editor canvas and the Alerts window. */
+.va { position: relative; width: 100%; height: 100%; display: grid; place-items: center; --va-speed: 0.5s; }
+.va-box { position: relative; display: grid; gap: 14px; max-width: 100%; max-height: 100%; }
+.va-lay-above { grid-template-rows: auto auto; }
+.va-lay-below { grid-template-rows: auto auto; }
+.va-lay-below .va-pic { order: 2; }
+.va-lay-left, .va-lay-right { grid-auto-flow: column; align-items: center; gap: 22px; }
+.va-lay-right .va-pic { order: 2; }
+.va-lay-behind { place-items: center; }
+.va-lay-behind .va-pic, .va-lay-behind .va-words { grid-area: 1 / 1; }
+.va-lay-behind .va-pic { opacity: 0.95; }
+.va-pic { display: grid; place-items: center; min-width: 0; min-height: 0; }
+.va-media { display: block; width: auto; height: auto; object-fit: contain; }
+.va-words { position: relative; display: grid; gap: 6px; min-width: 0; }
+.va-title { line-height: 1.1; overflow-wrap: anywhere; }
+.va-msg { line-height: 1.25; overflow-wrap: anywhere; font-weight: 550; }
+.va-frame { width: 100%; height: 100%; border: 0; background: transparent; }
+.va-fx { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.va-glow { position: absolute; inset: -30%; border-radius: 50%; background: radial-gradient(closest-side, var(--va-glow), transparent); opacity: 0; animation: va-glow 1.6s ease-out infinite; pointer-events: none; }
+@keyframes va-glow { 0% { opacity: 0; transform: scale(0.6); } 30% { opacity: 0.55; } 100% { opacity: 0; transform: scale(1.15); } }
+.va-shake { animation: va-shake 0.5s ease-in-out 3; }
+@keyframes va-shake { 0%, 100% { transform: translate(0, 0); } 20% { transform: translate(-10px, 4px) rotate(-1deg); } 40% { transform: translate(9px, -5px) rotate(1deg); } 60% { transform: translate(-7px, 3px); } 80% { transform: translate(6px, -2px); } }
+
+/* Coming in */
+.va[class*='va-in-'] .va-box, .va[class*='va-out-'] .va-box { animation-duration: var(--va-speed); animation-fill-mode: both; animation-timing-function: cubic-bezier(0.22, 0.9, 0.3, 1); }
+.va-in-fade .va-box { animation-name: va-fade-in; }
+.va-in-pop .va-box { animation-name: va-pop-in; animation-timing-function: cubic-bezier(0.22, 1.35, 0.36, 1) !important; }
+.va-in-zoom .va-box { animation-name: va-zoom-in; }
+.va-in-bounce .va-box { animation-name: va-bounce-in; animation-timing-function: ease-out !important; }
+.va-in-slide-up .va-box { animation-name: va-up-in; }
+.va-in-slide-down .va-box { animation-name: va-down-in; }
+.va-in-slide-left .va-box { animation-name: va-left-in; }
+.va-in-slide-right .va-box { animation-name: va-right-in; }
+.va-in-drop .va-box { animation-name: va-drop-in; animation-timing-function: cubic-bezier(0.3, 1.5, 0.5, 1) !important; }
+.va-in-flip .va-box { animation-name: va-flip-in; }
+.va-in-spin .va-box { animation-name: va-spin-in; }
+@keyframes va-fade-in { from { opacity: 0; } }
+@keyframes va-pop-in { from { opacity: 0; transform: scale(0.6); } }
+@keyframes va-zoom-in { from { opacity: 0; transform: scale(2.2); } }
+@keyframes va-bounce-in { 0% { opacity: 0; transform: scale(0.3); } 50% { opacity: 1; transform: scale(1.08); } 70% { transform: scale(0.94); } 100% { transform: scale(1); } }
+@keyframes va-up-in { from { opacity: 0; transform: translateY(120px); } }
+@keyframes va-down-in { from { opacity: 0; transform: translateY(-120px); } }
+@keyframes va-left-in { from { opacity: 0; transform: translateX(160px); } }
+@keyframes va-right-in { from { opacity: 0; transform: translateX(-160px); } }
+@keyframes va-drop-in { from { opacity: 0; transform: translateY(-260px); } }
+@keyframes va-flip-in { from { opacity: 0; transform: perspective(800px) rotateX(90deg); } }
+@keyframes va-spin-in { from { opacity: 0; transform: rotate(-200deg) scale(0.3); } }
+
+/* Going out */
+.va-out-fade .va-box { animation-name: va-fade-out; }
+.va-out-pop .va-box { animation-name: va-pop-out; }
+.va-out-zoom .va-box { animation-name: va-zoom-out; }
+.va-out-slide-up .va-box { animation-name: va-up-out; }
+.va-out-slide-down .va-box { animation-name: va-down-out; }
+.va-out-slide-left .va-box { animation-name: va-left-out; }
+.va-out-slide-right .va-box { animation-name: va-right-out; }
+.va-out-flip .va-box { animation-name: va-flip-out; }
+.va-out-none .va-box { opacity: 0; }
+.va-in-none .va-box { animation: none; }
+@keyframes va-fade-out { to { opacity: 0; } }
+@keyframes va-pop-out { to { opacity: 0; transform: scale(0.6); } }
+@keyframes va-zoom-out { to { opacity: 0; transform: scale(1.8); } }
+@keyframes va-up-out { to { opacity: 0; transform: translateY(-120px); } }
+@keyframes va-down-out { to { opacity: 0; transform: translateY(120px); } }
+@keyframes va-left-out { to { opacity: 0; transform: translateX(-160px); } }
+@keyframes va-right-out { to { opacity: 0; transform: translateX(160px); } }
+@keyframes va-flip-out { to { opacity: 0; transform: perspective(800px) rotateX(-90deg); } }
+
+/* Text effects */
+.va-l { display: inline-block; white-space: pre; }
+.va-l-wave { animation: va-wave 1.4s ease-in-out infinite; }
+.va-l-bounce { animation: va-hop 0.9s cubic-bezier(0.3, 0.7, 0.4, 1) infinite; }
+.va-l-type { animation: va-type 0.01s steps(1) both; }
+@keyframes va-wave { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-0.18em); } }
+@keyframes va-hop { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-0.32em); } }
+@keyframes va-type { from { opacity: 0; } to { opacity: 1; } }
+.va-t-pulse { animation: va-pulse 1.1s ease-in-out infinite; }
+.va-t-shake { animation: va-tshake 0.4s linear infinite; }
+.va-t-rainbow { animation: va-rainbow 3s linear infinite; }
+@keyframes va-pulse { 50% { transform: scale(1.07); } }
+@keyframes va-tshake { 25% { transform: translate(-2px, 1px) rotate(-1deg); } 75% { transform: translate(2px, -1px) rotate(1deg); } }
+@keyframes va-rainbow { to { filter: hue-rotate(360deg); } }
+.va-t-rainbow span { color: #ff5ce1 !important; }
+.va-t-rainbow span:nth-child(even) { color: #7ff6ff !important; }
+
+@media (prefers-reduced-motion: reduce) { .va-l, .va-t-pulse, .va-t-shake, .va-glow { animation: none !important; } }

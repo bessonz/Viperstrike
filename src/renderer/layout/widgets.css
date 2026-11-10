@@ -1,0 +1,19 @@
+@import '@fontsource-variable/instrument-sans';
+
+/* Shared by the editor and the OBS overlay. */
+.overlay-body { margin: 0; overflow: hidden; background: transparent; font-family: 'Instrument Sans Variable', 'Segoe UI', sans-serif; }
+.overlay-stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; }
+.overlay-item { position: absolute; left: 0; top: 0; transform-origin: center; transition: transform 90ms linear, width 90ms linear, height 90ms linear; }
+.w-fade { animation: w-fade 0.5s ease both; }
+@keyframes w-fade { from { opacity: 0; } }
+.w-rise { animation: w-rise 0.28s cubic-bezier(0.22, 0.8, 0.28, 1) both; }
+@keyframes w-rise { from { opacity: 0; transform: translateY(12px); } }
+.w-chat-line { animation: w-fade 0.3s ease both; }
+.w-chat-logo { display: inline-block; width: auto; vertical-align: -0.18em; }
+.w-viewers { display: inline-flex; align-items: center; line-height: 1; }
+.w-viewers img { display: block; width: auto; flex: none; }
+.w-viewers-count { display: block; font-weight: 700; letter-spacing: -0.01em; line-height: 1; text-box: trim-both cap alphabetic; }
+.w-pop { animation: w-pop 0.34s cubic-bezier(0.22, 1.2, 0.36, 1) both; }
+@keyframes w-pop { from { opacity: 0; transform: scale(0.82); } }
+.w-ticker { display: inline-block; padding-left: 100%; animation: w-ticker linear infinite; }
+@keyframes w-ticker { to { transform: translateX(-100%); } }
