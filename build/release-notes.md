@@ -1,1 +1,0 @@
-The overlay in OBS reconnects by itself. If its connection to Viperstrike drops or is refused (for example while Viperstrike restarts), it keeps trying every few seconds instead of going blank until you press Refresh in OBS.
